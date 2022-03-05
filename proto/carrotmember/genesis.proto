@@ -1,0 +1,14 @@
+syntax = "proto3";
+package hupayxcom.carrotmember.carrotmember;
+
+import "gogoproto/gogo.proto";
+import "carrotmember/params.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/hupayx-com/carrotMember/x/carrotmember/types";
+
+// GenesisState defines the carrotmember module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
+}
