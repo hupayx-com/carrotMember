@@ -160,6 +160,8 @@ var (
 		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
+
+		carrotmembermoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -357,6 +359,8 @@ func New(
 		appCodec,
 		keys[carrotmembermoduletypes.StoreKey],
 		keys[carrotmembermoduletypes.MemStoreKey],
+		app.AccountKeeper,
+		app.BankKeeper,
 		app.GetSubspace(carrotmembermoduletypes.ModuleName),
 	)
 	carrotmemberModule := carrotmembermodule.NewAppModule(appCodec, app.CarrotmemberKeeper, app.AccountKeeper, app.BankKeeper)

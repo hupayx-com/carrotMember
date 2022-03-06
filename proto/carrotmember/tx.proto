@@ -2,12 +2,33 @@ syntax = "proto3";
 package hupayxcom.carrotmember.carrotmember;
 
 // this line is used by starport scaffolding # proto/tx/import
+import "cosmos/base/v1beta1/coin.proto";
+import "gogoproto/gogo.proto";
 
 option go_package = "github.com/hupayx-com/carrotMember/x/carrotmember/types";
 
 // Msg defines the Msg service.
 service Msg {
-    // this line is used by starport scaffolding # proto/tx/rpc
+      rpc AddMember(MsgAddMember) returns (MsgAddMemberResponse);
+  rpc SendReward(MsgSendReward) returns (MsgSendRewardResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgAddMember {
+  string creator = 1;
+  string memberAddress = 2;
+  uint64 totalCnt = 3;
+  cosmos.base.v1beta1.Coin amount = 4 [(gogoproto.nullable) = false];
+}
+
+message MsgAddMemberResponse {
+}
+
+message MsgSendReward {
+  string creator = 1;
+}
+
+message MsgSendRewardResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

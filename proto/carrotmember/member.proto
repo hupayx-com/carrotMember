@@ -1,0 +1,17 @@
+syntax = "proto3";
+package hupayxcom.carrotmember.carrotmember;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "github.com/hupayx-com/carrotMember/x/carrotmember/types";
+
+message Member {
+  string creator = 1;
+  string member_address = 2;
+  uint64 total_cnt = 3; 
+  uint64 remain_cnt = 4; 
+  cosmos.base.v1beta1.Coin amount = 5 [(gogoproto.nullable) = false];
+  // google.protobuf.Timestamp create_time = 6;
+}
