@@ -38,6 +38,7 @@ function getStructure(template) {
 const getDefaultState = () => {
     return {
         Params: {},
+        Members: {},
         _Structure: {
             Member: getStructure(Member.fromPartial({})),
             Params: getStructure(Params.fromPartial({})),
@@ -71,6 +72,12 @@ export default {
                 params.query = null;
             }
             return state.Params[JSON.stringify(params)] ?? {};
+        },
+        getMembers: (state) => (params = { params: {} }) => {
+            if (!params.query) {
+                params.query = null;
+            }
+            return state.Members[JSON.stringify(params)] ?? {};
         },
         getTypeStructure: (state) => (type) => {
             return state._Structure[type].fields;
@@ -117,6 +124,24 @@ export default {
             }
             catch (e) {
                 throw new SpVuexError('QueryClient:QueryParams', 'API Node Unavailable. Could not perform query: ' + e.message);
+            }
+        },
+        async QueryMembers({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params, query = null }) {
+            try {
+                const key = params ?? {};
+                const queryClient = await initQueryClient(rootGetters);
+                let value = (await queryClient.queryMembers(query)).data;
+                while (all && value.pagination && value.pagination.next_key != null) {
+                    let next_values = (await queryClient.queryMembers({ ...query, 'pagination.key': value.pagination.next_key })).data;
+                    value = mergeResults(value, next_values);
+                }
+                commit('QUERY', { query: 'Members', key: { params: { ...key }, query }, value });
+                if (subscribe)
+                    commit('SUBSCRIBE', { action: 'QueryMembers', payload: { options: { all }, params: { ...key }, query } });
+                return getters['getMembers']({ params: { ...key }, query }) ?? {};
+            }
+            catch (e) {
+                throw new SpVuexError('QueryClient:QueryMembers', 'API Node Unavailable. Could not perform query: ' + e.message);
             }
         },
         async sendMsgSendReward({ rootGetters }, { value, fee = [], memo = '' }) {

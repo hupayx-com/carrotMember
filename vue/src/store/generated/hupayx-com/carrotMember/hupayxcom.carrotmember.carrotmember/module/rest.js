@@ -140,6 +140,21 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryMembers
+         * @summary Queries a list of members items.
+         * @request GET:/hupayx-com/carrotmember/carrotmember/members
+         */
+        this.queryMembers = (query, params = {}) => this.request({
+            path: `/hupayx-com/carrotmember/carrotmember/members`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryParams
          * @summary Parameters queries the parameters of the module.
          * @request GET:/hupayxcom/carrotmember/carrotmember/params

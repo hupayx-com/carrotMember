@@ -1,6 +1,11 @@
 /* eslint-disable */
 import { Reader, Writer } from "protobufjs/minimal";
 import { Params } from "../carrotmember/params";
+import {
+  PageRequest,
+  PageResponse,
+} from "../cosmos/base/query/v1beta1/pagination";
+import { Member } from "../carrotmember/member";
 
 export const protobufPackage = "hupayxcom.carrotmember.carrotmember";
 
@@ -11,6 +16,18 @@ export interface QueryParamsRequest {}
 export interface QueryParamsResponse {
   /** params holds all the parameters of this module. */
   params: Params | undefined;
+}
+
+export interface QueryMembersRequest {
+  /** Adding pagination to request */
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryMembersResponse {
+  /** Returning a list of posts */
+  Member: Member[];
+  /** Adding pagination to response */
+  pagination: PageResponse | undefined;
 }
 
 const baseQueryParamsRequest: object = {};
@@ -110,10 +127,163 @@ export const QueryParamsResponse = {
   },
 };
 
+const baseQueryMembersRequest: object = {};
+
+export const QueryMembersRequest = {
+  encode(
+    message: QueryMembersRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryMembersRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryMembersRequest } as QueryMembersRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryMembersRequest {
+    const message = { ...baseQueryMembersRequest } as QueryMembersRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryMembersRequest): unknown {
+    const obj: any = {};
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryMembersRequest>): QueryMembersRequest {
+    const message = { ...baseQueryMembersRequest } as QueryMembersRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryMembersResponse: object = {};
+
+export const QueryMembersResponse = {
+  encode(
+    message: QueryMembersResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.Member) {
+      Member.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryMembersResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryMembersResponse } as QueryMembersResponse;
+    message.Member = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.Member.push(Member.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryMembersResponse {
+    const message = { ...baseQueryMembersResponse } as QueryMembersResponse;
+    message.Member = [];
+    if (object.Member !== undefined && object.Member !== null) {
+      for (const e of object.Member) {
+        message.Member.push(Member.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryMembersResponse): unknown {
+    const obj: any = {};
+    if (message.Member) {
+      obj.Member = message.Member.map((e) =>
+        e ? Member.toJSON(e) : undefined
+      );
+    } else {
+      obj.Member = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryMembersResponse>): QueryMembersResponse {
+    const message = { ...baseQueryMembersResponse } as QueryMembersResponse;
+    message.Member = [];
+    if (object.Member !== undefined && object.Member !== null) {
+      for (const e of object.Member) {
+        message.Member.push(Member.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
+  /** Queries a list of members items. */
+  Members(request: QueryMembersRequest): Promise<QueryMembersResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -129,6 +299,18 @@ export class QueryClientImpl implements Query {
       data
     );
     return promise.then((data) => QueryParamsResponse.decode(new Reader(data)));
+  }
+
+  Members(request: QueryMembersRequest): Promise<QueryMembersResponse> {
+    const data = QueryMembersRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "hupayxcom.carrotmember.carrotmember.Query",
+      "Members",
+      data
+    );
+    return promise.then((data) =>
+      QueryMembersResponse.decode(new Reader(data))
+    );
   }
 }
 

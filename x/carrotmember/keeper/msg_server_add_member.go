@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/hupayx-com/carrotMember/x/carrotmember/types"
@@ -22,6 +23,8 @@ func (k msgServer) AddMember(goCtx context.Context, msg *types.MsgAddMember) (*t
 		RemainCnt: msg.TotalCnt,
 	}
 
+	fmt.Print(member)
+
 	k.AddRewardMember(ctx, member)
 
 	return &types.MsgAddMemberResponse{}, nil
@@ -35,13 +38,17 @@ func (k Keeper) AddRewardMember(ctx sdk.Context, member types.Member) error {
 		panic(err)
 	}
 
+	fmt.Print(toAddress)
+
 	// 주소 체크하고
 	memAddress, err := sdk.AccAddressFromBech32(member.MemberAddress)
 	if err != nil {
 		panic(err)
 	}
 
-	// ModuleName
+	fmt.Print(memAddress)
+
+	// // ModuleName
 	store := ctx.KVStore(k.storeKey)
 	b := k.cdc.MustMarshal(&member)
 
@@ -49,6 +56,7 @@ func (k Keeper) AddRewardMember(ctx sdk.Context, member types.Member) error {
 	amount := member.Amount.Amount
 	coins := sdk.NewCoins(sdk.NewCoin(member.Amount.Denom, amount))
 
+	fmt.Print(amount)
 	if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, toAddress, types.ModuleName, coins); err != nil {
 		return err
 	}
