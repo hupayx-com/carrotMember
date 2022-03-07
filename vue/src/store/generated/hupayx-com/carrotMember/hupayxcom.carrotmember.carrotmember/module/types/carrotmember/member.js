@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { Timestamp } from "../google/protobuf/timestamp";
 import * as Long from "long";
 import { util, configure, Writer, Reader } from "protobufjs/minimal";
 import { Coin } from "../cosmos/base/v1beta1/coin";
@@ -26,6 +27,9 @@ export const Member = {
         if (message.amount !== undefined) {
             Coin.encode(message.amount, writer.uint32(42).fork()).ldelim();
         }
+        if (message.createTime !== undefined) {
+            Timestamp.encode(toTimestamp(message.createTime), writer.uint32(50).fork()).ldelim();
+        }
         return writer;
     },
     decode(input, length) {
@@ -49,6 +53,9 @@ export const Member = {
                     break;
                 case 5:
                     message.amount = Coin.decode(reader, reader.uint32());
+                    break;
+                case 6:
+                    message.createTime = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -89,6 +96,12 @@ export const Member = {
         else {
             message.amount = undefined;
         }
+        if (object.createTime !== undefined && object.createTime !== null) {
+            message.createTime = fromJsonTimestamp(object.createTime);
+        }
+        else {
+            message.createTime = undefined;
+        }
         return message;
     },
     toJSON(message) {
@@ -100,6 +113,11 @@ export const Member = {
         message.remainCnt !== undefined && (obj.remainCnt = message.remainCnt);
         message.amount !== undefined &&
             (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
+        message.createTime !== undefined &&
+            (obj.createTime =
+                message.createTime !== undefined
+                    ? message.createTime.toISOString()
+                    : null);
         return obj;
     },
     fromPartial(object) {
@@ -134,6 +152,12 @@ export const Member = {
         else {
             message.amount = undefined;
         }
+        if (object.createTime !== undefined && object.createTime !== null) {
+            message.createTime = object.createTime;
+        }
+        else {
+            message.createTime = undefined;
+        }
         return message;
     },
 };
@@ -148,6 +172,27 @@ var globalThis = (() => {
         return global;
     throw "Unable to locate global object";
 })();
+function toTimestamp(date) {
+    const seconds = date.getTime() / 1000;
+    const nanos = (date.getTime() % 1000) * 1000000;
+    return { seconds, nanos };
+}
+function fromTimestamp(t) {
+    let millis = t.seconds * 1000;
+    millis += t.nanos / 1000000;
+    return new Date(millis);
+}
+function fromJsonTimestamp(o) {
+    if (o instanceof Date) {
+        return o;
+    }
+    else if (typeof o === "string") {
+        return new Date(o);
+    }
+    else {
+        return fromTimestamp(Timestamp.fromJSON(o));
+    }
+}
 function longToNumber(long) {
     if (long.gt(Number.MAX_SAFE_INTEGER)) {
         throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");

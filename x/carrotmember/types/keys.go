@@ -25,7 +25,8 @@ const (
 var (
 	// Keys for store prefixes
 	// Last* values are constant during a block.
-	MemberKey = []byte{0x11}
+	MemberKey         = []byte{0x11}
+	NextRewardTimeKey = []byte{0x21}
 )
 
 func GetRewardMemberKey(memAddr sdk.AccAddress) []byte {

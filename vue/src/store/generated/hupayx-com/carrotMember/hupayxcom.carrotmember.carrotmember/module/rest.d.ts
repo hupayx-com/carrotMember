@@ -12,6 +12,8 @@ export interface CarrotmemberMember {
      * signatures required by gogoproto.
      */
     amount?: V1Beta1Coin;
+    /** @format date-time */
+    createTime?: string;
 }
 export declare type CarrotmemberMsgAddMemberResponse = object;
 export declare type CarrotmemberMsgSendRewardResponse = object;
@@ -31,6 +33,9 @@ export interface CarrotmemberQueryMembersResponse {
      *  }
      */
     pagination?: V1Beta1PageResponse;
+}
+export interface CarrotmemberQueryNextRewardTimeResponse {
+    nextTime?: string;
 }
 /**
  * QueryParamsResponse is response type for the Query/Params RPC method.
@@ -187,6 +192,15 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
         "pagination.countTotal"?: boolean;
         "pagination.reverse"?: boolean;
     }, params?: RequestParams) => Promise<HttpResponse<CarrotmemberQueryMembersResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryNextRewardTime
+     * @summary Queries a list of nextRewardTime items.
+     * @request GET:/hupayx-com/carrotmember/carrotmember/nextRewardTime
+     */
+    queryNextRewardTime: (params?: RequestParams) => Promise<HttpResponse<CarrotmemberQueryNextRewardTimeResponse, RpcStatus>>;
     /**
      * No description
      *

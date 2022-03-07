@@ -221,6 +221,101 @@ export const QueryMembersResponse = {
         return message;
     },
 };
+const baseQueryNextRewardTimeRequest = {};
+export const QueryNextRewardTimeRequest = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryNextRewardTimeRequest,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = {
+            ...baseQueryNextRewardTimeRequest,
+        };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = {
+            ...baseQueryNextRewardTimeRequest,
+        };
+        return message;
+    },
+};
+const baseQueryNextRewardTimeResponse = { nextTime: "" };
+export const QueryNextRewardTimeResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.nextTime !== "") {
+            writer.uint32(10).string(message.nextTime);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryNextRewardTimeResponse,
+        };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.nextTime = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryNextRewardTimeResponse,
+        };
+        if (object.nextTime !== undefined && object.nextTime !== null) {
+            message.nextTime = String(object.nextTime);
+        }
+        else {
+            message.nextTime = "";
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.nextTime !== undefined && (obj.nextTime = message.nextTime);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryNextRewardTimeResponse,
+        };
+        if (object.nextTime !== undefined && object.nextTime !== null) {
+            message.nextTime = object.nextTime;
+        }
+        else {
+            message.nextTime = "";
+        }
+        return message;
+    },
+};
 export class QueryClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
@@ -234,5 +329,10 @@ export class QueryClientImpl {
         const data = QueryMembersRequest.encode(request).finish();
         const promise = this.rpc.request("hupayxcom.carrotmember.carrotmember.Query", "Members", data);
         return promise.then((data) => QueryMembersResponse.decode(new Reader(data)));
+    }
+    NextRewardTime(request) {
+        const data = QueryNextRewardTimeRequest.encode(request).finish();
+        const promise = this.rpc.request("hupayxcom.carrotmember.carrotmember.Query", "NextRewardTime", data);
+        return promise.then((data) => QueryNextRewardTimeResponse.decode(new Reader(data)));
     }
 }
