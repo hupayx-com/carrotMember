@@ -30,6 +30,12 @@ export interface QueryMembersResponse {
   pagination: PageResponse | undefined;
 }
 
+export interface QueryNextRewardTimeRequest {}
+
+export interface QueryNextRewardTimeResponse {
+  nextTime: string;
+}
+
 const baseQueryParamsRequest: object = {};
 
 export const QueryParamsRequest = {
@@ -278,12 +284,137 @@ export const QueryMembersResponse = {
   },
 };
 
+const baseQueryNextRewardTimeRequest: object = {};
+
+export const QueryNextRewardTimeRequest = {
+  encode(
+    _: QueryNextRewardTimeRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryNextRewardTimeRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryNextRewardTimeRequest,
+    } as QueryNextRewardTimeRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): QueryNextRewardTimeRequest {
+    const message = {
+      ...baseQueryNextRewardTimeRequest,
+    } as QueryNextRewardTimeRequest;
+    return message;
+  },
+
+  toJSON(_: QueryNextRewardTimeRequest): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<QueryNextRewardTimeRequest>
+  ): QueryNextRewardTimeRequest {
+    const message = {
+      ...baseQueryNextRewardTimeRequest,
+    } as QueryNextRewardTimeRequest;
+    return message;
+  },
+};
+
+const baseQueryNextRewardTimeResponse: object = { nextTime: "" };
+
+export const QueryNextRewardTimeResponse = {
+  encode(
+    message: QueryNextRewardTimeResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.nextTime !== "") {
+      writer.uint32(10).string(message.nextTime);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryNextRewardTimeResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryNextRewardTimeResponse,
+    } as QueryNextRewardTimeResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.nextTime = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryNextRewardTimeResponse {
+    const message = {
+      ...baseQueryNextRewardTimeResponse,
+    } as QueryNextRewardTimeResponse;
+    if (object.nextTime !== undefined && object.nextTime !== null) {
+      message.nextTime = String(object.nextTime);
+    } else {
+      message.nextTime = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryNextRewardTimeResponse): unknown {
+    const obj: any = {};
+    message.nextTime !== undefined && (obj.nextTime = message.nextTime);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryNextRewardTimeResponse>
+  ): QueryNextRewardTimeResponse {
+    const message = {
+      ...baseQueryNextRewardTimeResponse,
+    } as QueryNextRewardTimeResponse;
+    if (object.nextTime !== undefined && object.nextTime !== null) {
+      message.nextTime = object.nextTime;
+    } else {
+      message.nextTime = "";
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
   /** Queries a list of members items. */
   Members(request: QueryMembersRequest): Promise<QueryMembersResponse>;
+  /** Queries a list of nextRewardTime items. */
+  NextRewardTime(
+    request: QueryNextRewardTimeRequest
+  ): Promise<QueryNextRewardTimeResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -310,6 +441,20 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryMembersResponse.decode(new Reader(data))
+    );
+  }
+
+  NextRewardTime(
+    request: QueryNextRewardTimeRequest
+  ): Promise<QueryNextRewardTimeResponse> {
+    const data = QueryNextRewardTimeRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "hupayxcom.carrotmember.carrotmember.Query",
+      "NextRewardTime",
+      data
+    );
+    return promise.then((data) =>
+      QueryNextRewardTimeResponse.decode(new Reader(data))
     );
   }
 }

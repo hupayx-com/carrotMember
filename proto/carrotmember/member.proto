@@ -13,5 +13,5 @@ message Member {
   uint64 total_cnt = 3; 
   uint64 remain_cnt = 4; 
   cosmos.base.v1beta1.Coin amount = 5 [(gogoproto.nullable) = false];
-  // google.protobuf.Timestamp create_time = 6;
+  google.protobuf.Timestamp create_time = 6 [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
 }

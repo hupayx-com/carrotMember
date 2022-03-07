@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { Timestamp } from "../google/protobuf/timestamp";
 import * as Long from "long";
 import { util, configure, Writer, Reader } from "protobufjs/minimal";
 import { Coin } from "../cosmos/base/v1beta1/coin";
@@ -10,8 +11,8 @@ export interface Member {
   memberAddress: string;
   totalCnt: number;
   remainCnt: number;
-  /** google.protobuf.Timestamp create_time = 6; */
   amount: Coin | undefined;
+  createTime: Date | undefined;
 }
 
 const baseMember: object = {
@@ -38,6 +39,12 @@ export const Member = {
     if (message.amount !== undefined) {
       Coin.encode(message.amount, writer.uint32(42).fork()).ldelim();
     }
+    if (message.createTime !== undefined) {
+      Timestamp.encode(
+        toTimestamp(message.createTime),
+        writer.uint32(50).fork()
+      ).ldelim();
+    }
     return writer;
   },
 
@@ -62,6 +69,11 @@ export const Member = {
           break;
         case 5:
           message.amount = Coin.decode(reader, reader.uint32());
+          break;
+        case 6:
+          message.createTime = fromTimestamp(
+            Timestamp.decode(reader, reader.uint32())
+          );
           break;
         default:
           reader.skipType(tag & 7);
@@ -98,6 +110,11 @@ export const Member = {
     } else {
       message.amount = undefined;
     }
+    if (object.createTime !== undefined && object.createTime !== null) {
+      message.createTime = fromJsonTimestamp(object.createTime);
+    } else {
+      message.createTime = undefined;
+    }
     return message;
   },
 
@@ -110,6 +127,11 @@ export const Member = {
     message.remainCnt !== undefined && (obj.remainCnt = message.remainCnt);
     message.amount !== undefined &&
       (obj.amount = message.amount ? Coin.toJSON(message.amount) : undefined);
+    message.createTime !== undefined &&
+      (obj.createTime =
+        message.createTime !== undefined
+          ? message.createTime.toISOString()
+          : null);
     return obj;
   },
 
@@ -140,6 +162,11 @@ export const Member = {
     } else {
       message.amount = undefined;
     }
+    if (object.createTime !== undefined && object.createTime !== null) {
+      message.createTime = object.createTime;
+    } else {
+      message.createTime = undefined;
+    }
     return message;
   },
 };
@@ -164,6 +191,28 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+function toTimestamp(date: Date): Timestamp {
+  const seconds = date.getTime() / 1_000;
+  const nanos = (date.getTime() % 1_000) * 1_000_000;
+  return { seconds, nanos };
+}
+
+function fromTimestamp(t: Timestamp): Date {
+  let millis = t.seconds * 1_000;
+  millis += t.nanos / 1_000_000;
+  return new Date(millis);
+}
+
+function fromJsonTimestamp(o: any): Date {
+  if (o instanceof Date) {
+    return o;
+  } else if (typeof o === "string") {
+    return new Date(o);
+  } else {
+    return fromTimestamp(Timestamp.fromJSON(o));
+  }
+}
 
 function longToNumber(long: Long): number {
   if (long.gt(Number.MAX_SAFE_INTEGER)) {

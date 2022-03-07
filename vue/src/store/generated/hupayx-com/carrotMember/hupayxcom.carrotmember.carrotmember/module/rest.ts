@@ -26,6 +26,9 @@ export interface CarrotmemberMember {
    * signatures required by gogoproto.
    */
   amount?: V1Beta1Coin;
+
+  /** @format date-time */
+  createTime?: string;
 }
 
 export type CarrotmemberMsgAddMemberResponse = object;
@@ -50,6 +53,10 @@ export interface CarrotmemberQueryMembersResponse {
    *  }
    */
   pagination?: V1Beta1PageResponse;
+}
+
+export interface CarrotmemberQueryNextRewardTimeResponse {
+  nextTime?: string;
 }
 
 /**
@@ -363,6 +370,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       path: `/hupayx-com/carrotmember/carrotmember/members`,
       method: "GET",
       query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryNextRewardTime
+   * @summary Queries a list of nextRewardTime items.
+   * @request GET:/hupayx-com/carrotmember/carrotmember/nextRewardTime
+   */
+  queryNextRewardTime = (params: RequestParams = {}) =>
+    this.request<CarrotmemberQueryNextRewardTimeResponse, RpcStatus>({
+      path: `/hupayx-com/carrotmember/carrotmember/nextRewardTime`,
+      method: "GET",
       format: "json",
       ...params,
     });

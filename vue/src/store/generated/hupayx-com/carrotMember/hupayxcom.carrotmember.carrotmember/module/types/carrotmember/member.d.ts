@@ -6,8 +6,8 @@ export interface Member {
     memberAddress: string;
     totalCnt: number;
     remainCnt: number;
-    /** google.protobuf.Timestamp create_time = 6; */
     amount: Coin | undefined;
+    createTime: Date | undefined;
 }
 export declare const Member: {
     encode(message: Member, writer?: Writer): Writer;

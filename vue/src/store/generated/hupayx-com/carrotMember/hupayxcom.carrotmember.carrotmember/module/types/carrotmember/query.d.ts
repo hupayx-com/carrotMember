@@ -21,6 +21,11 @@ export interface QueryMembersResponse {
     /** Adding pagination to response */
     pagination: PageResponse | undefined;
 }
+export interface QueryNextRewardTimeRequest {
+}
+export interface QueryNextRewardTimeResponse {
+    nextTime: string;
+}
 export declare const QueryParamsRequest: {
     encode(_: QueryParamsRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryParamsRequest;
@@ -49,18 +54,35 @@ export declare const QueryMembersResponse: {
     toJSON(message: QueryMembersResponse): unknown;
     fromPartial(object: DeepPartial<QueryMembersResponse>): QueryMembersResponse;
 };
+export declare const QueryNextRewardTimeRequest: {
+    encode(_: QueryNextRewardTimeRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryNextRewardTimeRequest;
+    fromJSON(_: any): QueryNextRewardTimeRequest;
+    toJSON(_: QueryNextRewardTimeRequest): unknown;
+    fromPartial(_: DeepPartial<QueryNextRewardTimeRequest>): QueryNextRewardTimeRequest;
+};
+export declare const QueryNextRewardTimeResponse: {
+    encode(message: QueryNextRewardTimeResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryNextRewardTimeResponse;
+    fromJSON(object: any): QueryNextRewardTimeResponse;
+    toJSON(message: QueryNextRewardTimeResponse): unknown;
+    fromPartial(object: DeepPartial<QueryNextRewardTimeResponse>): QueryNextRewardTimeResponse;
+};
 /** Query defines the gRPC querier service. */
 export interface Query {
     /** Parameters queries the parameters of the module. */
     Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
     /** Queries a list of members items. */
     Members(request: QueryMembersRequest): Promise<QueryMembersResponse>;
+    /** Queries a list of nextRewardTime items. */
+    NextRewardTime(request: QueryNextRewardTimeRequest): Promise<QueryNextRewardTimeResponse>;
 }
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
     constructor(rpc: Rpc);
     Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
     Members(request: QueryMembersRequest): Promise<QueryMembersResponse>;
+    NextRewardTime(request: QueryNextRewardTimeRequest): Promise<QueryNextRewardTimeResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

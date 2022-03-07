@@ -39,6 +39,7 @@ const getDefaultState = () => {
     return {
         Params: {},
         Members: {},
+        NextRewardTime: {},
         _Structure: {
             Member: getStructure(Member.fromPartial({})),
             Params: getStructure(Params.fromPartial({})),
@@ -78,6 +79,12 @@ export default {
                 params.query = null;
             }
             return state.Members[JSON.stringify(params)] ?? {};
+        },
+        getNextRewardTime: (state) => (params = { params: {} }) => {
+            if (!params.query) {
+                params.query = null;
+            }
+            return state.NextRewardTime[JSON.stringify(params)] ?? {};
         },
         getTypeStructure: (state) => (type) => {
             return state._Structure[type].fields;
@@ -142,6 +149,20 @@ export default {
             }
             catch (e) {
                 throw new SpVuexError('QueryClient:QueryMembers', 'API Node Unavailable. Could not perform query: ' + e.message);
+            }
+        },
+        async QueryNextRewardTime({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params, query = null }) {
+            try {
+                const key = params ?? {};
+                const queryClient = await initQueryClient(rootGetters);
+                let value = (await queryClient.queryNextRewardTime()).data;
+                commit('QUERY', { query: 'NextRewardTime', key: { params: { ...key }, query }, value });
+                if (subscribe)
+                    commit('SUBSCRIBE', { action: 'QueryNextRewardTime', payload: { options: { all }, params: { ...key }, query } });
+                return getters['getNextRewardTime']({ params: { ...key }, query }) ?? {};
+            }
+            catch (e) {
+                throw new SpVuexError('QueryClient:QueryNextRewardTime', 'API Node Unavailable. Could not perform query: ' + e.message);
             }
         },
         async sendMsgSendReward({ rootGetters }, { value, fee = [], memo = '' }) {

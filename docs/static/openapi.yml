@@ -5678,6 +5678,9 @@ paths:
                         custom method
 
                         signatures required by gogoproto.
+                    createTime:
+                      type: string
+                      format: date-time
                 title: Returning a list of posts
               pagination:
                 title: Adding pagination to response
@@ -5782,6 +5785,38 @@ paths:
           in: query
           required: false
           type: boolean
+      tags:
+        - Query
+  /hupayx-com/carrotmember/carrotmember/nextRewardTime:
+    get:
+      summary: Queries a list of nextRewardTime items.
+      operationId: HupayxcomCarrotmemberCarrotmemberNextRewardTime
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              nextTime:
+                type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
       tags:
         - Query
   /hupayxcom/carrotmember/carrotmember/params:
@@ -10667,6 +10702,9 @@ definitions:
 
           NOTE: The amount field is an Int which implements the custom method
           signatures required by gogoproto.
+      createTime:
+        type: string
+        format: date-time
   hupayxcom.carrotmember.carrotmember.MsgAddMemberResponse:
     type: object
   hupayxcom.carrotmember.carrotmember.MsgSendRewardResponse:
@@ -10707,6 +10745,9 @@ definitions:
                 method
 
                 signatures required by gogoproto.
+            createTime:
+              type: string
+              format: date-time
         title: Returning a list of posts
       pagination:
         title: Adding pagination to response
@@ -10734,6 +10775,11 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
+  hupayxcom.carrotmember.carrotmember.QueryNextRewardTimeResponse:
+    type: object
+    properties:
+      nextTime:
+        type: string
   hupayxcom.carrotmember.carrotmember.QueryParamsResponse:
     type: object
     properties:
