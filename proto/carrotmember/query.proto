@@ -1,12 +1,13 @@
 syntax = "proto3";
 package hupayxcom.carrotmember.carrotmember;
-
-import "gogoproto/gogo.proto";
+
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "carrotmember/params.proto";
 import "carrotmember/member.proto";
 // this line is used by starport scaffolding # 1
+import "cosmos/base/v1beta1/coin.proto";
+import "gogoproto/gogo.proto";
 
 
 option go_package = "github.com/hupayx-com/carrotMember/x/carrotmember/types";
@@ -25,6 +26,11 @@ service Query {
 // Queries a list of nextRewardTime items.
 	rpc NextRewardTime(QueryNextRewardTimeRequest) returns (QueryNextRewardTimeResponse) {
 		option (google.api.http).get = "/hupayx-com/carrotmember/carrotmember/nextRewardTime";
+	}
+
+// Queries a list of rewardPool items.
+	rpc RewardPool(QueryRewardPoolRequest) returns (QueryRewardPoolResponse) {
+		option (google.api.http).get = "/hupayx-com/carrotmember/carrotmember/rewardPool";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -56,6 +62,13 @@ message QueryNextRewardTimeRequest {
 
 message QueryNextRewardTimeResponse {
   string nextTime = 1;
+}
+
+message QueryRewardPoolRequest {
+}
+
+message QueryRewardPoolResponse {
+  repeated cosmos.base.v1beta1.Coin amount = 1 [(gogoproto.nullable) = false];
 }
 
 // this line is used by starport scaffolding # 3

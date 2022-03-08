@@ -2,6 +2,7 @@ import { Reader, Writer } from "protobufjs/minimal";
 import { Params } from "../carrotmember/params";
 import { PageRequest, PageResponse } from "../cosmos/base/query/v1beta1/pagination";
 import { Member } from "../carrotmember/member";
+import { Coin } from "../cosmos/base/v1beta1/coin";
 export declare const protobufPackage = "hupayxcom.carrotmember.carrotmember";
 /** QueryParamsRequest is request type for the Query/Params RPC method. */
 export interface QueryParamsRequest {
@@ -25,6 +26,11 @@ export interface QueryNextRewardTimeRequest {
 }
 export interface QueryNextRewardTimeResponse {
     nextTime: string;
+}
+export interface QueryRewardPoolRequest {
+}
+export interface QueryRewardPoolResponse {
+    amount: Coin[];
 }
 export declare const QueryParamsRequest: {
     encode(_: QueryParamsRequest, writer?: Writer): Writer;
@@ -68,6 +74,20 @@ export declare const QueryNextRewardTimeResponse: {
     toJSON(message: QueryNextRewardTimeResponse): unknown;
     fromPartial(object: DeepPartial<QueryNextRewardTimeResponse>): QueryNextRewardTimeResponse;
 };
+export declare const QueryRewardPoolRequest: {
+    encode(_: QueryRewardPoolRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryRewardPoolRequest;
+    fromJSON(_: any): QueryRewardPoolRequest;
+    toJSON(_: QueryRewardPoolRequest): unknown;
+    fromPartial(_: DeepPartial<QueryRewardPoolRequest>): QueryRewardPoolRequest;
+};
+export declare const QueryRewardPoolResponse: {
+    encode(message: QueryRewardPoolResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryRewardPoolResponse;
+    fromJSON(object: any): QueryRewardPoolResponse;
+    toJSON(message: QueryRewardPoolResponse): unknown;
+    fromPartial(object: DeepPartial<QueryRewardPoolResponse>): QueryRewardPoolResponse;
+};
 /** Query defines the gRPC querier service. */
 export interface Query {
     /** Parameters queries the parameters of the module. */
@@ -76,6 +96,8 @@ export interface Query {
     Members(request: QueryMembersRequest): Promise<QueryMembersResponse>;
     /** Queries a list of nextRewardTime items. */
     NextRewardTime(request: QueryNextRewardTimeRequest): Promise<QueryNextRewardTimeResponse>;
+    /** Queries a list of rewardPool items. */
+    RewardPool(request: QueryRewardPoolRequest): Promise<QueryRewardPoolResponse>;
 }
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
@@ -83,6 +105,7 @@ export declare class QueryClientImpl implements Query {
     Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
     Members(request: QueryMembersRequest): Promise<QueryMembersResponse>;
     NextRewardTime(request: QueryNextRewardTimeRequest): Promise<QueryNextRewardTimeResponse>;
+    RewardPool(request: QueryRewardPoolRequest): Promise<QueryRewardPoolResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

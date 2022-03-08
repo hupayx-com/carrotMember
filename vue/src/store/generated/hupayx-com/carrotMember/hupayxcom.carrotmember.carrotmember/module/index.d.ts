@@ -1,8 +1,8 @@
 import { StdFee } from "@cosmjs/launchpad";
 import { Registry, OfflineSigner, EncodeObject } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
-import { MsgSendReward } from "./types/carrotmember/tx";
 import { MsgAddMember } from "./types/carrotmember/tx";
+import { MsgSendReward } from "./types/carrotmember/tx";
 export declare const MissingWalletError: Error;
 export declare const registry: Registry;
 interface TxClientOptions {
@@ -14,8 +14,8 @@ interface SignAndBroadcastOptions {
 }
 declare const txClient: (wallet: OfflineSigner, { addr: addr }?: TxClientOptions) => Promise<{
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }?: SignAndBroadcastOptions) => any;
-    msgSendReward: (data: MsgSendReward) => EncodeObject;
     msgAddMember: (data: MsgAddMember) => EncodeObject;
+    msgSendReward: (data: MsgSendReward) => EncodeObject;
 }>;
 interface QueryClientOptions {
     addr: string;

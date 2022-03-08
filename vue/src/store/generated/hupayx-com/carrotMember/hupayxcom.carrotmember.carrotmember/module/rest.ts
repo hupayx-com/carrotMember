@@ -67,6 +67,10 @@ export interface CarrotmemberQueryParamsResponse {
   params?: CarrotmemberParams;
 }
 
+export interface CarrotmemberQueryRewardPoolResponse {
+  amount?: V1Beta1Coin[];
+}
+
 export interface ProtobufAny {
   "@type"?: string;
 }
@@ -385,6 +389,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryNextRewardTime = (params: RequestParams = {}) =>
     this.request<CarrotmemberQueryNextRewardTimeResponse, RpcStatus>({
       path: `/hupayx-com/carrotmember/carrotmember/nextRewardTime`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryRewardPool
+   * @summary Queries a list of rewardPool items.
+   * @request GET:/hupayx-com/carrotmember/carrotmember/rewardPool
+   */
+  queryRewardPool = (params: RequestParams = {}) =>
+    this.request<CarrotmemberQueryRewardPoolResponse, RpcStatus>({
+      path: `/hupayx-com/carrotmember/carrotmember/rewardPool`,
       method: "GET",
       format: "json",
       ...params,

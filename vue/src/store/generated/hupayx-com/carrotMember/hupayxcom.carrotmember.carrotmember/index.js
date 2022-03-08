@@ -40,6 +40,7 @@ const getDefaultState = () => {
         Params: {},
         Members: {},
         NextRewardTime: {},
+        RewardPool: {},
         _Structure: {
             Member: getStructure(Member.fromPartial({})),
             Params: getStructure(Params.fromPartial({})),
@@ -85,6 +86,12 @@ export default {
                 params.query = null;
             }
             return state.NextRewardTime[JSON.stringify(params)] ?? {};
+        },
+        getRewardPool: (state) => (params = { params: {} }) => {
+            if (!params.query) {
+                params.query = null;
+            }
+            return state.RewardPool[JSON.stringify(params)] ?? {};
         },
         getTypeStructure: (state) => (type) => {
             return state._Structure[type].fields;
@@ -165,21 +172,18 @@ export default {
                 throw new SpVuexError('QueryClient:QueryNextRewardTime', 'API Node Unavailable. Could not perform query: ' + e.message);
             }
         },
-        async sendMsgSendReward({ rootGetters }, { value, fee = [], memo = '' }) {
+        async QueryRewardPool({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params, query = null }) {
             try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgSendReward(value);
-                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
-                        gas: "200000" }, memo });
-                return result;
+                const key = params ?? {};
+                const queryClient = await initQueryClient(rootGetters);
+                let value = (await queryClient.queryRewardPool()).data;
+                commit('QUERY', { query: 'RewardPool', key: { params: { ...key }, query }, value });
+                if (subscribe)
+                    commit('SUBSCRIBE', { action: 'QueryRewardPool', payload: { options: { all }, params: { ...key }, query } });
+                return getters['getRewardPool']({ params: { ...key }, query }) ?? {};
             }
             catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgSendReward:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgSendReward:Send', 'Could not broadcast Tx: ' + e.message);
-                }
+                throw new SpVuexError('QueryClient:QueryRewardPool', 'API Node Unavailable. Could not perform query: ' + e.message);
             }
         },
         async sendMsgAddMember({ rootGetters }, { value, fee = [], memo = '' }) {
@@ -199,18 +203,20 @@ export default {
                 }
             }
         },
-        async MsgSendReward({ rootGetters }, { value }) {
+        async sendMsgSendReward({ rootGetters }, { value, fee = [], memo = '' }) {
             try {
                 const txClient = await initTxClient(rootGetters);
                 const msg = await txClient.msgSendReward(value);
-                return msg;
+                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
+                        gas: "200000" }, memo });
+                return result;
             }
             catch (e) {
                 if (e == MissingWalletError) {
                     throw new SpVuexError('TxClient:MsgSendReward:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgSendReward:Create', 'Could not create message: ' + e.message);
+                    throw new SpVuexError('TxClient:MsgSendReward:Send', 'Could not broadcast Tx: ' + e.message);
                 }
             }
         },
@@ -226,6 +232,21 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgAddMember:Create', 'Could not create message: ' + e.message);
+                }
+            }
+        },
+        async MsgSendReward({ rootGetters }, { value }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgSendReward(value);
+                return msg;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgSendReward:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgSendReward:Create', 'Could not create message: ' + e.message);
                 }
             }
         },

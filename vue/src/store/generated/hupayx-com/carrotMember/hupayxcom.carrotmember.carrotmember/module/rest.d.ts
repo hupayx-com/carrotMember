@@ -44,6 +44,9 @@ export interface CarrotmemberQueryParamsResponse {
     /** params holds all the parameters of this module. */
     params?: CarrotmemberParams;
 }
+export interface CarrotmemberQueryRewardPoolResponse {
+    amount?: V1Beta1Coin[];
+}
 export interface ProtobufAny {
     "@type"?: string;
 }
@@ -201,6 +204,15 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/hupayx-com/carrotmember/carrotmember/nextRewardTime
      */
     queryNextRewardTime: (params?: RequestParams) => Promise<HttpResponse<CarrotmemberQueryNextRewardTimeResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryRewardPool
+     * @summary Queries a list of rewardPool items.
+     * @request GET:/hupayx-com/carrotmember/carrotmember/rewardPool
+     */
+    queryRewardPool: (params?: RequestParams) => Promise<HttpResponse<CarrotmemberQueryRewardPoolResponse, RpcStatus>>;
     /**
      * No description
      *

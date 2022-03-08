@@ -5819,6 +5819,53 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
+  /hupayx-com/carrotmember/carrotmember/rewardPool:
+    get:
+      summary: Queries a list of rewardPool items.
+      operationId: HupayxcomCarrotmemberCarrotmemberRewardPool
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              amount:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                    amount:
+                      type: string
+                  description: >-
+                    Coin defines a token with a denomination and an amount.
+
+
+                    NOTE: The amount field is an Int which implements the custom
+                    method
+
+                    signatures required by gogoproto.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
   /hupayxcom/carrotmember/carrotmember/params:
     get:
       summary: Parameters queries the parameters of the module.
@@ -10787,6 +10834,23 @@ definitions:
         description: params holds all the parameters of this module.
         type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
+  hupayxcom.carrotmember.carrotmember.QueryRewardPoolResponse:
+    type: object
+    properties:
+      amount:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
   ibc.applications.transfer.v1.DenomTrace:
     type: object
     properties:

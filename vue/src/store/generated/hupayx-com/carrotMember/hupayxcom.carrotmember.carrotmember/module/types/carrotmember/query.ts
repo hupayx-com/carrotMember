@@ -6,6 +6,7 @@ import {
   PageResponse,
 } from "../cosmos/base/query/v1beta1/pagination";
 import { Member } from "../carrotmember/member";
+import { Coin } from "../cosmos/base/v1beta1/coin";
 
 export const protobufPackage = "hupayxcom.carrotmember.carrotmember";
 
@@ -34,6 +35,12 @@ export interface QueryNextRewardTimeRequest {}
 
 export interface QueryNextRewardTimeResponse {
   nextTime: string;
+}
+
+export interface QueryRewardPoolRequest {}
+
+export interface QueryRewardPoolResponse {
+  amount: Coin[];
 }
 
 const baseQueryParamsRequest: object = {};
@@ -405,6 +412,117 @@ export const QueryNextRewardTimeResponse = {
   },
 };
 
+const baseQueryRewardPoolRequest: object = {};
+
+export const QueryRewardPoolRequest = {
+  encode(_: QueryRewardPoolRequest, writer: Writer = Writer.create()): Writer {
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryRewardPoolRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryRewardPoolRequest } as QueryRewardPoolRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): QueryRewardPoolRequest {
+    const message = { ...baseQueryRewardPoolRequest } as QueryRewardPoolRequest;
+    return message;
+  },
+
+  toJSON(_: QueryRewardPoolRequest): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(_: DeepPartial<QueryRewardPoolRequest>): QueryRewardPoolRequest {
+    const message = { ...baseQueryRewardPoolRequest } as QueryRewardPoolRequest;
+    return message;
+  },
+};
+
+const baseQueryRewardPoolResponse: object = {};
+
+export const QueryRewardPoolResponse = {
+  encode(
+    message: QueryRewardPoolResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.amount) {
+      Coin.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryRewardPoolResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryRewardPoolResponse,
+    } as QueryRewardPoolResponse;
+    message.amount = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.amount.push(Coin.decode(reader, reader.uint32()));
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryRewardPoolResponse {
+    const message = {
+      ...baseQueryRewardPoolResponse,
+    } as QueryRewardPoolResponse;
+    message.amount = [];
+    if (object.amount !== undefined && object.amount !== null) {
+      for (const e of object.amount) {
+        message.amount.push(Coin.fromJSON(e));
+      }
+    }
+    return message;
+  },
+
+  toJSON(message: QueryRewardPoolResponse): unknown {
+    const obj: any = {};
+    if (message.amount) {
+      obj.amount = message.amount.map((e) => (e ? Coin.toJSON(e) : undefined));
+    } else {
+      obj.amount = [];
+    }
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryRewardPoolResponse>
+  ): QueryRewardPoolResponse {
+    const message = {
+      ...baseQueryRewardPoolResponse,
+    } as QueryRewardPoolResponse;
+    message.amount = [];
+    if (object.amount !== undefined && object.amount !== null) {
+      for (const e of object.amount) {
+        message.amount.push(Coin.fromPartial(e));
+      }
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -415,6 +533,8 @@ export interface Query {
   NextRewardTime(
     request: QueryNextRewardTimeRequest
   ): Promise<QueryNextRewardTimeResponse>;
+  /** Queries a list of rewardPool items. */
+  RewardPool(request: QueryRewardPoolRequest): Promise<QueryRewardPoolResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -455,6 +575,20 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryNextRewardTimeResponse.decode(new Reader(data))
+    );
+  }
+
+  RewardPool(
+    request: QueryRewardPoolRequest
+  ): Promise<QueryRewardPoolResponse> {
+    const data = QueryRewardPoolRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "hupayxcom.carrotmember.carrotmember.Query",
+      "RewardPool",
+      data
+    );
+    return promise.then((data) =>
+      QueryRewardPoolResponse.decode(new Reader(data))
     );
   }
 }

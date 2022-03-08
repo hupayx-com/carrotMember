@@ -3,6 +3,7 @@ import { Reader, Writer } from "protobufjs/minimal";
 import { Params } from "../carrotmember/params";
 import { PageRequest, PageResponse, } from "../cosmos/base/query/v1beta1/pagination";
 import { Member } from "../carrotmember/member";
+import { Coin } from "../cosmos/base/v1beta1/coin";
 export const protobufPackage = "hupayxcom.carrotmember.carrotmember";
 const baseQueryParamsRequest = {};
 export const QueryParamsRequest = {
@@ -316,6 +317,101 @@ export const QueryNextRewardTimeResponse = {
         return message;
     },
 };
+const baseQueryRewardPoolRequest = {};
+export const QueryRewardPoolRequest = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryRewardPoolRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = { ...baseQueryRewardPoolRequest };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = { ...baseQueryRewardPoolRequest };
+        return message;
+    },
+};
+const baseQueryRewardPoolResponse = {};
+export const QueryRewardPoolResponse = {
+    encode(message, writer = Writer.create()) {
+        for (const v of message.amount) {
+            Coin.encode(v, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = {
+            ...baseQueryRewardPoolResponse,
+        };
+        message.amount = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.amount.push(Coin.decode(reader, reader.uint32()));
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = {
+            ...baseQueryRewardPoolResponse,
+        };
+        message.amount = [];
+        if (object.amount !== undefined && object.amount !== null) {
+            for (const e of object.amount) {
+                message.amount.push(Coin.fromJSON(e));
+            }
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        if (message.amount) {
+            obj.amount = message.amount.map((e) => (e ? Coin.toJSON(e) : undefined));
+        }
+        else {
+            obj.amount = [];
+        }
+        return obj;
+    },
+    fromPartial(object) {
+        const message = {
+            ...baseQueryRewardPoolResponse,
+        };
+        message.amount = [];
+        if (object.amount !== undefined && object.amount !== null) {
+            for (const e of object.amount) {
+                message.amount.push(Coin.fromPartial(e));
+            }
+        }
+        return message;
+    },
+};
 export class QueryClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
@@ -334,5 +430,10 @@ export class QueryClientImpl {
         const data = QueryNextRewardTimeRequest.encode(request).finish();
         const promise = this.rpc.request("hupayxcom.carrotmember.carrotmember.Query", "NextRewardTime", data);
         return promise.then((data) => QueryNextRewardTimeResponse.decode(new Reader(data)));
+    }
+    RewardPool(request) {
+        const data = QueryRewardPoolRequest.encode(request).finish();
+        const promise = this.rpc.request("hupayxcom.carrotmember.carrotmember.Query", "RewardPool", data);
+        return promise.then((data) => QueryRewardPoolResponse.decode(new Reader(data)));
     }
 }

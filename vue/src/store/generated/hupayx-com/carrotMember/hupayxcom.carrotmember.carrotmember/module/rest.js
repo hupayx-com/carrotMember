@@ -169,6 +169,20 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryRewardPool
+         * @summary Queries a list of rewardPool items.
+         * @request GET:/hupayx-com/carrotmember/carrotmember/rewardPool
+         */
+        this.queryRewardPool = (params = {}) => this.request({
+            path: `/hupayx-com/carrotmember/carrotmember/rewardPool`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryParams
          * @summary Parameters queries the parameters of the module.
          * @request GET:/hupayxcom/carrotmember/carrotmember/params
