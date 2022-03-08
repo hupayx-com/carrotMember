@@ -61,7 +61,6 @@ func (k Keeper) AddRewardMember(ctx sdk.Context, member types.Member) error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "duplicate member address ")
 	}
 
-	// TODO
 	amount := member.Amount.Amount.Mul(sdk.NewIntFromUint64(member.TotalCnt))
 	coins := sdk.NewCoins(sdk.NewCoin(member.Amount.Denom, amount))
 
