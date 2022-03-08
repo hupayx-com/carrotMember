@@ -4,13 +4,13 @@ import { StdFee } from "@cosmjs/launchpad";
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
-import { MsgAddMember } from "./types/carrotmember/tx";
 import { MsgSendReward } from "./types/carrotmember/tx";
+import { MsgAddMember } from "./types/carrotmember/tx";
 
 
 const types = [
-  ["/hupayxcom.carrotmember.carrotmember.MsgAddMember", MsgAddMember],
   ["/hupayxcom.carrotmember.carrotmember.MsgSendReward", MsgSendReward],
+  ["/hupayxcom.carrotmember.carrotmember.MsgAddMember", MsgAddMember],
   
 ];
 export const MissingWalletError = new Error("wallet is required");
@@ -43,8 +43,8 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
 
   return {
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions = {fee: defaultFee, memo: ""}) => client.signAndBroadcast(address, msgs, fee,memo),
-    msgAddMember: (data: MsgAddMember): EncodeObject => ({ typeUrl: "/hupayxcom.carrotmember.carrotmember.MsgAddMember", value: MsgAddMember.fromPartial( data ) }),
     msgSendReward: (data: MsgSendReward): EncodeObject => ({ typeUrl: "/hupayxcom.carrotmember.carrotmember.MsgSendReward", value: MsgSendReward.fromPartial( data ) }),
+    msgAddMember: (data: MsgAddMember): EncodeObject => ({ typeUrl: "/hupayxcom.carrotmember.carrotmember.MsgAddMember", value: MsgAddMember.fromPartial( data ) }),
     
   };
 };
